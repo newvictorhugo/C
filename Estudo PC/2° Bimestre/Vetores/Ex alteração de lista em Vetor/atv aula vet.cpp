@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <ctype.h>
 #define tf 10
 
 main(){
 	int vet[tf], tl=0, elem, i, pos;
+	char confirm;
 	
 	printf("\n----------Inserir----------\n");
 	printf("Entre com o elemento: %d\n", tl);
@@ -24,7 +26,7 @@ main(){
 	scanf("%d", &pos);
 	
 	for(i=tl;i<pos;i++)
-		vet[i]=vet[i-1];
+		vet[i]=vet[i];
 	vet[pos]=elem;
 	tl++;
 	
@@ -42,19 +44,30 @@ main(){
 		printf("Elemento %d encontrado na posicao %d \n", elem, pos);
 		
 	else{
-		vet[tl]=elem;
-		tl++;
+		printf("Elemento %d nao existe, deseja adiciona-lo a posicao %d? Y or N\n", elem, pos);
+		fflush(stdin);
+		scanf("%c", &confirm);
+		
+		if(confirm=='Y' || confirm=='y'){
+			vet[tl]=elem;
+			tl++;
+			printf("Elemento %d adicionado na posicao %d \n", elem, pos);
+		}
+		else
+			printf("Elemento nao adicionado");
 	}
 		
 	printf("\n----------Excluir Elemento em Determinada Posicao----------\n");
 	printf("Entre com a posicao: \n");
 	scanf("%d", &pos);
 	
-	for(i=pos;i<tl-1;i++)
+	for(i=pos;i<tl;i++)
 		vet[i]=vet[i+1];
 	tl--;
 	
 	for(i=0;i<tl;i++)
 	printf("\n[%d]=%d", i, vet[i]);
-}
 	
+	return 0;
+}
+
