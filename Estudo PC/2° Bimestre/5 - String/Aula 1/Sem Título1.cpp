@@ -15,6 +15,6 @@ main(){
 	
 	printf("\n\n Tamanho da string: %d", strlen(nome));
 	printf("\n\n String Concatenada: %s", strcat(nome, sobrenome));
-	printf("\n\n Conversao p/ maiusculo: %s", strupr(nome, sobrenome));
-	printf("\n\n Conversao p/ minusculo: %s", strlwr(nome, sobrenome));
+	printf("\n\n Conversao p/ maiusculo: %s", strupr(nome));
+	printf("\n\n Conversao p/ minusculo: %s", strlwr(nome));
 }

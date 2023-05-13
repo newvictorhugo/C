@@ -61,7 +61,7 @@ main(){
 	printf("Entre com a posicao: \n");
 	scanf("%d", &pos);
 	
-	for(i=pos;i<tl;i++)
+	for(i=pos;i<tl-1;i++)
 		vet[i]=vet[i+1];
 	tl--;
 	
