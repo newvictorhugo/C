@@ -8,7 +8,7 @@
 #define tfProj 99
 
 main(){
-	int vetNum[tfNum], tlNum=0, vetCod[tfCod], tlCod=0, vetRolP[tfRolP], tlRolP=0, i, j, opcao, pos;
+	int vetNum[tfNum], tlNum=0, vetCod[tfCod], tlCod=0, vetRolP[tfRolP], tlRolP=0, i, j, k, l, opcao, pos, volExiste;
 	char vetVol[tfVol][100], tlVol=0, nome[100], vetEmp[tfEmp][100], tlEmp=0, empresa[100], vetProj[tfProj][100], tlProj=0, projeto[100];
 	
 	printf("\n---Sistema de Gerenciamento ONGADAPV---:\n\n");
@@ -41,16 +41,27 @@ main(){
 							printf("Nome: "); 
 							fflush(stdin);
 							gets(nome);
-							if(tlVol<tfVol){
-								strcpy(vetVol[tlVol], nome);
-								vetNum[tlNum] = tlNum;
-								tlVol++;
-								tlNum++;
+							
+							volExiste=0;
+							for(i=0;i<tfVol;i++){
+								if(strncmp(nome + l, vetVol[i], strlen(nome) - l) == 0) {
+									printf("Voluntario ja cadastrado.");
+						       		volExiste=1;
+						   		}
 							}
-							else{
-								printf("Limite de voluntario atingido.");
+							if(volExiste==0){
+								if(tlVol<tfVol){
+									strcpy(vetVol[tlVol], nome);
+									vetNum[tlNum] = tlNum;
+									tlVol++;
+									tlNum++;
+									printf("\nVoluntario cadastrado com sucesso!\n");
+								}
+								else{
+									printf("\nLimite de voluntario atingido.\n");
+								}
+								opcao=1;
 							}
-							opcao=1;
 						break;
 						
 						case 2:
@@ -63,9 +74,10 @@ main(){
 								vetCod[tlCod] = tlCod;
 								tlEmp++;
 								tlCod++;
+								printf("\nEmpresa cadastrada com sucesso!\n");
 							}
 							else{
-								printf("Limite de empresas atingido.");
+								printf("\nLimite de empresas atingido.\n");
 							}
 							opcao=1;
 						break;		
@@ -77,12 +89,13 @@ main(){
 							gets(projeto);
 							if(tlProj<tfProj){
 								strcpy(vetProj[tlProj], projeto);
-								vetCod[tlRolP] = tlRolP;
+								vetRolP[tlRolP] = tlRolP;
 								tlProj++;
 								tlRolP++;
+								printf("\nProjeto cadastrado com sucesso!\n");
 							}
 							else{
-								printf("Limite de projeto atingido.");
+								printf("\nLimite de projeto atingido.\n");
 							}
 							opcao=1;
 						break;
@@ -102,7 +115,7 @@ main(){
 						
 						case 1:
 							printf("\n---Excluir Voluntario---\n\n");
-							printf("Digite o numero do voluntario: ");
+							printf("Digite o codigo do voluntario: ");
 							fflush(stdin);
 							scanf("%d", &pos);
 							
@@ -139,6 +152,26 @@ main(){
                				printf("\nEmpresa nao encontrado.\n\n");
             }				opcao=2;
 						break;
+						
+						case 3:
+							printf("\n---Excluir Projeto---\n\n");
+							printf("Digite o codigo do projeto: ");
+							fflush(stdin);
+							scanf("%d", &pos);
+							
+							for(i=0;i<tlRolP;i++){
+								if(vetRolP[i] == pos){
+									for(j = i;j<tlRolP -1;j++){
+										strcpy(vetProj[j], vetProj[j+1]);
+									}
+									tlRolP--;
+									printf("\nProjeto excluido com sucesso.\n\n");
+								}
+							}
+							if(i == tlRolP){
+               				printf("\nProjeto nao encontrado.\n\n");
+            }				opcao=2;
+						break;
 					}
 				break;
 					
@@ -163,8 +196,30 @@ main(){
 							printf("%d - %s\n", vetCod[i], vetEmp[i]);
 						}
 					}
+					if(tlRolP==0){
+						printf("\n--Lista de Lista de Projetos---\n");
+						printf("\nNao ha Projetos cadastradas...\n\n");
+					}
+					else{
+						printf("\n--Lista de Projetos---\n\n");
+						for(i=0;i<tlRolP;i++){
+							printf("%d - %s\n", vetRolP[i], vetProj[i]);
+						}
+					}
 					
 					printf("\n9 - Voltar\n\n");
+					fflush(stdin);
+					scanf("%d", &opcao);
+				break;
+				
+				default:
+					printf("\nOpcao Invalida.\n\n");
+					printf("\n---Sistema de Gerenciamento ONGADAPV---:\n\n");
+					printf("1 - Cadastrar\n");
+					printf("2 - Exclusao\n");
+					printf("3 - Lancamento\n");
+					printf("4 - Relatorio\n");
+					printf("9 - Finalizar\n\n");
 					fflush(stdin);
 					scanf("%d", &opcao);
 				break;
