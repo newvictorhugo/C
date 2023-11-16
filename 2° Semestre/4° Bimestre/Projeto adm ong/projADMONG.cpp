@@ -31,12 +31,12 @@ typedef struct{
 
 typedef struct{
 	int vProj[TF_PROJ], TLP = 0, cod_proj;
-	char vDescricao[TF_PROJ][100];
+	char vProjeto[MAX_STR], descricao[MAX_STR_X5], marcacao[MAX_STR_X5];
 }projeto;
 
 typedef struct{
 	int vCodDoa[TF_DOA], TLD = 0, cod_doa;
-	char vInfoQuem[TF_DOA][100], vInfoOque[TF_DOA][100];
+	char vInfoQuem[MAX_STR], vInfoOque[MAX_STR];
 }doacao;
 
 typedef struct{
@@ -167,12 +167,12 @@ int main(){
 							
 						case 4:
 							system("cls");
-							
+							cadastrarProjeto(&a);
 							break;
 							
 						case 5:
 							system("cls");
-							
+							cadastrarDoacao(&a);
 							break;
 							
 						case 0:
@@ -195,7 +195,7 @@ int main(){
 						
 						case 1:
 							system("cls");
-							
+							exclusaoVoluntario(&a);
 							break;
 							
 						case 2:
@@ -294,21 +294,44 @@ int main(){
 	
 }
 
+
 bool codigoExiste(FILE *pont, int codigo) {
     int cod;
     char buffer[255];
 
     rewind(pont);
 
-    while(fgets(buffer, 255, pont) != NULL) {
-        if(sscanf(buffer, "Cod: %d", &cod) == 1) {
-            if(cod == codigo) {
+    while(fgets(buffer, 255, pont) != NULL){
+        if(sscanf(buffer, "Cod: %d", &cod) == 1){
+            if(cod == codigo){
                 return true;
             }
         }
     }
     return false;
 }
+
+int busca(FILE *pont, char nome[]){
+    char buffer[MAX_STR];
+    long posicao = -1;
+
+    rewind(pont);
+
+    while(fgets(buffer, MAX_STR, pont) != NULL){
+        if(strstr(buffer, nome) != NULL){
+            fseek(pont, posicao, SEEK_SET);
+            return posicao;
+        }
+        posicao = ftell(pont);
+    }
+    return -1;
+}
+
+
+
+
+//----------CADASTRO----------//
+
 
 void cadastrarVoluntario(menuInfoStruct *a){
 	char continuar;
@@ -431,7 +454,7 @@ void cadastrarAnimal(menuInfoStruct *a){
 	fclose(pont);
 }
 void cadastrarEmpresa(menuInfoStruct *a){
-		char continuar;
+	char continuar;
 	FILE *pont;
 	pont = fopen("cadempresa.txt", "a+");
 	if(pont == NULL){
@@ -486,25 +509,208 @@ void cadastrarEmpresa(menuInfoStruct *a){
 	fclose(pont);
 }
 void cadastrarProjeto(menuInfoStruct *a){
+	char continuar;
 	FILE *pont;
-	pont = fopen("arquivo.txt", "a");
-	if(pont ==NULL){
+	pont = fopen("cadprojeto.txt", "a+");
+	if(pont == NULL){
 		printf("\nErro ao acessar o arquivo!!\n");
 		exit(1);
 	}
+	do{
+		int indice = a->proj.TLP;
+		int codigo;
+		
+		while(codigoExiste(pont, indice)){
+			indice++;
+		}
+		
+		printf("\n-Codigo do projeto-");
+		printf("\n(Sugestao '%d'): ", indice);
+		do{
+			scanf("%d", &codigo);
+			getchar();
+			
+			if(codigoExiste(pont, codigo)){
+				printf("\nCodigo ja existe!!\nDigite outro codigo(Sugestao '%d'): ", indice);
+			}else{
+				a->proj.vProj[indice] = codigo;
+				break;
+			}
+		}while(true);
+		printf("Nome do projeto: ");
+		fgets(a->proj.vProjeto, sizeof(a->proj.vProjeto), stdin);
+		a->proj.vProjeto[strcspn(a->proj.vProjeto, "\n")] = 0;
+		printf("Descricao: ");
+		fgets(a->proj.descricao, sizeof(a->proj.descricao), stdin);
+		a->proj.descricao[strcspn(a->proj.descricao, "\n")] = 0;
+		printf("Marcacao: ");
+		fgets(a->proj.marcacao, sizeof(a->proj.marcacao), stdin);
+		a->proj.marcacao[strcspn(a->proj.marcacao, "\n")] = 0;
+		
+		fprintf(pont, "\nCod: %d\nNome: %s\nDescricao: %s\nMarcacao: %s\n", a->proj.vProj[indice], a->proj.vProjeto, a->proj.descricao, a->proj.marcacao);
+		
+		do{
+			printf("Continuar?(s/n): ");
+			scanf("%c", &continuar);
+			getchar();
+			continuar = tolower(continuar);
+			if(continuar !='n' && continuar != 's'){
+				printf("Opcao invalida!!\n");
+			}
+		}while(continuar != 's' && continuar != 'n');
+	}while(continuar != 'n');
+	
 	
 	fclose(pont);
 }
-void cadastrarDoacao(menuInfoStruct*a){
+void cadastrarDoacao(menuInfoStruct *a){
+	char continuar;
 	FILE *pont;
-	pont = fopen("arquivo.txt", "a");
-	if(pont ==NULL){
+	pont = fopen("caddoacao.txt", "a+");
+	if(pont == NULL){
 		printf("\nErro ao acessar o arquivo!!\n");
 		exit(1);
 	}
+	do{
+		int indice = a->doa.TLD;
+		int codigo;
+		
+		while(codigoExiste(pont, indice)){
+			indice++;
+		}
+		
+		printf("\n-Codigo da doacao-");
+		printf("\n(Sugestao '%d'): ", indice);
+		do{
+			scanf("%d", &codigo);
+			getchar();
+			
+			if(codigoExiste(pont, codigo)){
+				printf("\nCodigo ja existe!!\nDigite outro codigo(Sugestao '%d'): ", indice);
+			}else{
+				a->doa.vCodDoa[indice] = codigo;
+				break;
+			}
+		}while(true);
+		printf("Nome do doador: ");
+		fgets(a->doa.vInfoQuem, sizeof(a->doa.vInfoQuem), stdin);
+		a->doa.vInfoQuem[strcspn(a->doa.vInfoQuem, "\n")] = 0;
+		printf("O que foi doado: ");
+		fgets(a->doa.vInfoOque, sizeof(a->doa.vInfoOque), stdin);
+		a->doa.vInfoOque[strcspn(a->doa.vInfoOque, "\n")] = 0;
+		printf("Data(dd/mm/aaaa): ");
+		scanf("%d/%d/%d", &a->data.dia, &a->data.mes, &a->data.ano);
+		getchar();
+		
+		fprintf(pont, "\nCod: %d\nNome Doador: %s\nItem doado: %s\nData: %d/%d/%d\n", a->doa.vCodDoa[indice], a->doa.vInfoQuem, a->doa.vInfoOque, a->data.dia, a->data.mes, a->data.ano);
+		
+		do{
+			printf("Continuar?(s/n): ");
+			scanf("%c", &continuar);
+			getchar();
+			continuar = tolower(continuar);
+			if(continuar !='n' && continuar != 's'){
+				printf("Opcao invalida!!\n");
+			}
+		}while(continuar != 's' && continuar != 'n');
+	}while(continuar != 'n');
+	
 	
 	fclose(pont);
 }
+//----------FIM DE CADASTRO----------//
+
+
+//----------EXCLUSAO----------//
+
+
+void exclusaoVoluntario(menuInfoStruct *a){
+	FILE *pont, *temp;
+	char buffer[255];
+	int cod, codBusca;
+	int encontrado = 0;
+
+	pont = fopen("cadvoluntario.txt", "r");
+	if(pont == NULL){
+		printf("\nErro ao acessar o arquivo!!\n");
+		return;
+	}
+
+	temp = fopen("temp.txt", "w");
+	if(temp == NULL){
+		printf("\nErro ao criar arquivo temporario!!\n");
+		fclose(pont);
+		return;
+	}
+
+	printf("Digite o codigo do voluntario: ");
+	scanf("%d", &codBusca);
+
+	while(fgets(buffer, 255, pont) != NULL){
+		if(sscanf(buffer, "Cod: %d", &cod) == 1){
+			if(cod == codBusca){
+				encontrado = 1;
+				printf("\nEncontrado:\n%s", buffer); // Mostrando as informações do voluntário
+				while(fgets(buffer, 255, pont) && strncmp(buffer, "\n", 1) != 0){
+					printf("%s", buffer);
+				}
+				do{
+					printf("\nDeseja realmente excluir? (s/n): ");
+					char confirma;
+					scanf(" %c", &confirma);
+				
+					if(confirma == 's' || confirma == 'S'){
+						continue; // Não escreve no arquivo temporário
+					}else if(confirma == 'n' || confirma == 'N'){
+						encontrado = 2;
+					}else{
+						encontrado = 3;
+						printf("\nOpcao invalida\n");
+					}
+				}while(encontrado==3);
+				
+			}
+		}
+		fprintf(temp, "%s", buffer);
+	}
+
+	fclose(pont);
+	fclose(temp);
+
+	if(encontrado == 1){
+		remove("cadvoluntario.txt");
+		rename("temp.txt", "cadvoluntario.txt");
+		printf("Voluntario excluido com sucesso!\n");
+	} else if(encontrado == 0){
+		remove("temp.txt");
+		printf("Codigo nao encontrado.\n");
+	}else{
+		remove("temp.txt");
+	}
+	system("cls");
+}
+
+void exclusaoAnimal(menuInfoStruct *a){
+	
+	
+}
+void exclusaoEmpresa(menuInfoStruct *a){
+	
+	
+}
+void exclusaoProjeto(menuInfoStruct *a){
+	
+	
+}
+void exclusaoDoacao(menuInfoStruct*a){
+	
+	
+}
+
+//----------FIM DE EXCLUSAO----------//
+
+
+
 
 
 
