@@ -5,23 +5,7 @@ Nascimento: 10/10/1010
 Sexo: M
 Especie: Canino
 Raca: sla
-Castrado S
-
-Cod: 0
-Nome: qweqwe
-Nascimento: 12/12/1212
-Sexo: F
-Especie: Felino
-Raca: slatbm
-Castrado N
-
-Cod: 1
-Nome: qeqeqe
-Nascimento: 11/11/1111
-Sexo: I
-Especie: Canino
-Raca: sladuasvezes
-Castrado S
+Castrado: S
 
 Cod: 2
 Nome: slaslasla
@@ -29,4 +13,4 @@ Nascimento: 9/9/9999
 Sexo: M
 Especie: Felino
 Raca: sladequatro
-Castrado N
+Castrado: N
