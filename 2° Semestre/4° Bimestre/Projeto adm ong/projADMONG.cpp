@@ -118,27 +118,46 @@ int menuAlterar(){
 	return opcaoAlt;
 }
 
+int menuRelatorio(){
+	int opcaoRel;
+	printf("\n\n---Menu Relatorio---\n\n");
+	printf("1 - Relatorio Voluntario\n");
+	printf("2 - Relatorio Empresa\n");
+	printf("3 - Relatorio Projeto\n");
+	printf("0 - Voltar\n\n");
+	scanf("%d", &opcaoRel);
+	getchar();
+	return opcaoRel;
+}
+
 void cadastrarVoluntario(menuInfoStruct *a);
 void cadastrarAnimal(menuInfoStruct *a);
 void cadastrarEmpresa(menuInfoStruct *a);
 void cadastrarProjeto(menuInfoStruct *a);
-void cadastrarDoacao(menuInfoStruct*a);
+void cadastrarDoacao(menuInfoStruct *a);
 
 void exclusaoVoluntario(menuInfoStruct *a);
 void exclusaoAnimal(menuInfoStruct *a);
 void exclusaoEmpresa(menuInfoStruct *a);
 void exclusaoProjeto(menuInfoStruct *a);
-void exclusaoDoacao(menuInfoStruct*a);
+void exclusaoDoacao(menuInfoStruct *a);
 
 void alterarVoluntario(menuInfoStruct *a);
 void alterarAnimal(menuInfoStruct *a);
 void alterarEmpresa(menuInfoStruct *a);
 void alterarProjeto(menuInfoStruct *a);
-void alterarDoacao(menuInfoStruct*a);
+void alterarDoacao(menuInfoStruct *a);
+
+void lancamentoHoras(menuInfoStruct *a);
+
+void relatorioVoluntario(menuInfoStruct *a);
+void relatorioAnimal(menuInfoStruct *a);
+void relatorioEmpresa(menuInfoStruct *a);
+void relatorioProjeto(menuInfoStruct *a);
 
 int main(){
 	menuInfoStruct a;
-	int opcao, opcaoCad, opcaoExc, opcaoAlt;
+	int opcao, opcaoCad, opcaoExc, opcaoAlt, opcaoRel;
 	
 	do{
 		opcao = menu();
@@ -274,12 +293,28 @@ int main(){
 			
 			case 4:
 				system("cls");
-				
+				lancamentoHoras(&a);
 				break;
 			
 			case 5:
 				system("cls");
-				
+				do{
+					opcaoRel = menuRelatorio();
+					switch(opcaoRel){
+						case 1:
+							relatorioVoluntario(&a);
+							break;
+							
+						case 2:
+							relatorioEmpresa(&a);
+							break;
+							
+						case 3:
+							relatorioProjeto(&a);
+							break;
+					}
+					
+				}while(opcaoRel!=0);
 				break;
 			
 			case 0:
@@ -980,7 +1015,7 @@ void alterarVoluntario(menuInfoStruct *a){
     FILE *pont, *temp;
     char buffer[MAX_STR_X10];
     int cod, codBusca;
-    bool encontrado = false;
+    bool encontrado = false, confirmado = false;
 
     pont = fopen("cadvoluntario.txt", "r");
     if(pont == NULL){
@@ -1001,49 +1036,72 @@ void alterarVoluntario(menuInfoStruct *a){
 
     while(fgets(buffer, MAX_STR_X10, pont) != NULL){
         if(sscanf(buffer, "Cod: %d", &cod) == 1){
+            fprintf(temp, "%s", buffer); // Escreve o código no arquivo temporário
             if(cod == codBusca){
                 encontrado = true;
                 printf("\nEncontrado:\n%s", buffer);
-                fprintf(temp, "%s", buffer); // Escreve o código no arquivo temporário
-
-                // Exibir e capturar novas informações
-                printf("Nome do Voluntario (mantido): ");
-                fgets(buffer, MAX_STR_X10, pont); // Ler o nome do arquivo original
-                printf("%s", buffer); // Exibir o nome
+				while(fgets(buffer, MAX_STR_X10, pont) && strncmp(buffer, "\n", 1) != 0){
+					printf("%s", buffer);
+				}
                 fprintf(temp, "%s", buffer); // Escrever o nome no arquivo temporário
 
-                printf("Digite o novo numero de celular: ");
-                fgets(a->vol.cel, MAX_STR, stdin);
-                a->vol.cel[strcspn(a->vol.cel, "\n")] = 0;
-                fprintf(temp, "Celular: %s\n", a->vol.cel);
+                // Perguntar se quer alterar
+                char confirma;
+                printf("\nDeseja realmente alterar? (s/n): ");
+                scanf(" %c", &confirma);
+                getchar();
 
-                printf("Digite o novo email: ");
-                fgets(a->vol.email, MAX_STR, stdin);
-                a->vol.email[strcspn(a->vol.email, "\n")] = 0;
-                fprintf(temp, "Email: %s\n", a->vol.email);
+                if(confirma == 's' || confirma == 'S'){
+                    confirmado = true;
 
-                // Pular as linhas antigas de celular e email no arquivo original
-                fgets(buffer, MAX_STR_X10, pont);
-                fgets(buffer, MAX_STR_X10, pont);
+                    printf("Digite o novo numero de celular: ");
+                    fgets(a->vol.cel, MAX_STR, stdin);
+                    a->vol.cel[strcspn(a->vol.cel, "\n")] = 0;
+                    fprintf(temp, "Celular: %s\n", a->vol.cel);
 
-                continue; // Pular para a próxima iteração para evitar escrever as informações antigas
+                    printf("Digite o novo email: ");
+                    fgets(a->vol.email, MAX_STR, stdin);
+                    a->vol.email[strcspn(a->vol.email, "\n")] = 0;
+                    fprintf(temp, "Email: %s\n", a->vol.email);
+
+                    // Pular as linhas antigas de celular e email no arquivo original
+                    fgets(buffer, MAX_STR_X10, pont);
+                    fgets(buffer, MAX_STR_X10, pont);
+                    continue;
+                } else {
+                    // Se não for alterar, copia as informações antigas para o arquivo temporário
+                    fprintf(temp, "%s", buffer); // Celular antigo
+                    fgets(buffer, MAX_STR_X10, pont); // Ler linha de email
+                    fprintf(temp, "%s", buffer); // Email antigo
+                }
+            } else {
+                fprintf(temp, "%s", buffer); // Nome
+                fgets(buffer, MAX_STR_X10, pont); // Ler linha de celular
+                fprintf(temp, "%s", buffer); // Celular
+                fgets(buffer, MAX_STR_X10, pont); // Ler linha de email
+                fprintf(temp, "%s", buffer); // Email
             }
+        } else {
+            fprintf(temp, "%s", buffer);
         }
-        fprintf(temp, "%s", buffer);
     }
 
     fclose(pont);
     fclose(temp);
 
-    if(encontrado){
+    if(encontrado && confirmado){
         remove("cadvoluntario.txt");
         rename("temp.txt", "cadvoluntario.txt");
-        printf("Informacoes do voluntario atualizadas com sucesso!\n");
+        printf("Informacoes do voluntario alteradas com sucesso!\n");
+    } else if(encontrado && !confirmado){
+        remove("temp.txt");
+        printf("Alteracao cancelada.\n");
     } else {
         remove("temp.txt");
         printf("Codigo nao encontrado.\n");
     }
 }
+
 
 void alterarAnimal(menuInfoStruct *a){
 	
@@ -1059,6 +1117,187 @@ void alterarDoacao(menuInfoStruct*a){
 }
 
 //----------FIM DE ALTERAR----------//
+
+
+//----------LANCAMENTOS----------//
+
+void lancamentoHoras(menuInfoStruct *a){
+    FILE *pontVol, *pontProj, *pontEmp, *pontLanc;
+    
+    bool encontrado;
+    int codigo, codigo1, codigo2, codBusca, horas;
+    char buffer[MAX_STR], buffer1[MAX_STR], buffer2[MAX_STR], buffer3[MAX_STR];
+
+    pontVol = fopen("cadvoluntario.txt", "r");
+    if(pontVol == NULL){
+        printf("\nErro ao acessar o arquivo cadvoluntario.txt!\n");
+        return;
+    }
+    
+    do{
+    	encontrado = false;
+    	printf("\nDigite o codigo do voluntario: ");
+		scanf("%d", &codBusca);
+		getchar();
+		rewind(pontVol);
+	    while(fgets(buffer, MAX_STR, pontVol) != NULL){
+	        if(sscanf(buffer, "Cod: %d", &codigo) == 1){
+	            if(codigo == codBusca){
+	                encontrado = true;
+	                printf("\n%s", buffer); // Imprime o Código
+	                fgets(buffer, MAX_STR, pontVol); // Nome
+	                printf("%s", buffer); // Imprime o Nome
+	                fgets(buffer3, MAX_STR, pontVol); // Celular
+	                printf("%s", buffer3);
+	                fgets(buffer3, MAX_STR, pontVol); // Email
+	                printf("%s", buffer3);
+	
+	                break;
+	            }
+	        }
+	    }
+	
+	    if(!encontrado){
+	        printf("\nVoluntario com o codigo %d nao encontrado.\n", codBusca);
+	    }
+    }while(!encontrado);
+    fclose(pontVol);
+
+
+    pontProj = fopen("cadprojeto.txt", "r");
+    if(pontProj == NULL){
+        printf("Erro ao acessar o arquivo de projetos.\n");
+        return;
+    }
+   do{
+   		encontrado = false;
+    	printf("\nDigite o codigo do projeto: ");
+		scanf("%d", &codBusca);
+		getchar();
+		rewind(pontProj);
+	    while(fgets(buffer1, MAX_STR, pontProj) != NULL){
+	        if(sscanf(buffer1, "\nCod: %d", &codigo1) == 1){
+	            if(codigo1 == codBusca){
+	                encontrado = true;
+	                printf("\n%s", buffer1); // Imprime o Código
+	                fgets(buffer1, MAX_STR, pontProj); // Nome
+	                printf("%s", buffer1); // Imprime o Nome
+	                fgets(buffer3, MAX_STR, pontProj); // Celular
+	                printf("%s", buffer3);
+	                fgets(buffer3, MAX_STR, pontProj); // Email
+	                printf("%s", buffer3);
+	
+	                break;
+	            }
+	        }
+	    }
+	
+	    if(!encontrado){
+	        printf("\nProjeto com o codigo %d nao encontrado.\n", codBusca);
+	    }
+    }while(!encontrado);
+    fclose(pontProj);
+    
+
+    pontEmp = fopen("cadempresa.txt", "r");
+    if(pontEmp == NULL){
+        printf("Erro ao acessar o arquivo de empresas.\n");
+        return;
+    }
+    do{
+    	encontrado = false;
+    	printf("\nDigite o codigo da empresa: ");
+		scanf("%d", &codBusca);
+		getchar();
+		rewind(pontEmp);
+	    while(fgets(buffer2, MAX_STR, pontEmp) != NULL){
+	        if(sscanf(buffer2, "\nCod: %d", &codigo2) == 1){
+	            if(codigo2 == codBusca){
+	                encontrado = true;
+	                printf("\n%s", buffer2); // Imprime o Código
+	                fgets(buffer2, MAX_STR, pontEmp); // Nome
+	                printf("%s", buffer2); // Imprime o Nome
+	                fgets(buffer3, MAX_STR, pontEmp); // Celular
+	                printf("%s", buffer3);
+	                fgets(buffer3, MAX_STR, pontEmp); // Email
+	                printf("%s", buffer3);
+	
+	                break;
+	            }
+	        }
+	    }
+	
+	    if(!encontrado){
+	        printf("\nVoluntario com o codigo %d nao encontrado.\n", codBusca);
+	    }
+    }while(!encontrado);
+    fclose(pontEmp);
+
+    printf("\nDigite o numero de horas trabalhadas: ");
+    scanf("%d", &horas);
+    getchar();
+
+    pontLanc = fopen("lancamento.txt", "a");
+    if(pontLanc == NULL){
+        printf("Erro ao acessar o arquivo de lancamentos.\n");
+        return;
+    }
+
+    fprintf(pontLanc, "Voluntario - Cod: %d - %sProjeto - Cod: %d - %sEmpresa - Cod: %d - %sHoras: %d\n", codigo, buffer, codigo1, buffer1, codigo2, buffer2, horas);
+    fclose(pontLanc);
+
+    printf("Lancamento realizado com sucesso.\n");
+}
+
+//----------FIM DE LANCAMENTOS----------//
+
+
+//----------RELATORIO----------//
+
+void relatorioVoluntario(menuInfoStruct *a){
+    FILE *pontLanc;
+    int codBusca, totalHoras = 0;
+    int codigo, horas;
+    char buffer[MAX_STR], nomeProjeto[MAX_STR], nomeEmpresa[MAX_STR];
+    bool encontrado = false;
+
+    pontLanc = fopen("lancamento.txt", "r");
+    if (pontLanc == NULL) {
+        printf("Erro ao acessar o arquivo de lancamentos.\n");
+        return;
+    }
+
+    printf("\nDigite o codigo do voluntario para consulta: ");
+    scanf("%d", &codBusca);
+    getchar();
+
+    while (fgets(buffer, MAX_STR, pontLanc) != NULL) {
+        if (sscanf(buffer, "Voluntario - Cod: %d - %sProjeto - Cod: %*d - %sEmpresa - Cod: %*d - %sHoras: %d\n", &codigo, nomeProjeto, nomeEmpresa, &horas) != EOF) {
+            if (codigo == codBusca) {
+                encontrado = true;
+                totalHoras += horas;
+                printf("\nVoluntario - Cod: %d - %sProjeto - Cod: %*d - %sEmpresa - Cod: %*d - %sHoras: %d\n", codigo, nomeProjeto, nomeEmpresa, horas);
+            }
+        }
+    }
+
+    if (encontrado) {
+        printf("\nTotal de horas trabalhadas pelo voluntario %d: %d\n", codBusca, totalHoras);
+    } else {
+        printf("\nVoluntario com o codigo %d nao encontrado.\n", codBusca);
+    }
+
+    fclose(pontLanc);
+}
+
+void relatorioEmpresa(menuInfoStruct *a){
+	
+}
+void relatorioProjeto(menuInfoStruct *a){
+	
+}
+
+//----------FIM DO RELATORIO----------//
 
 
 
