@@ -1,0 +1,25 @@
+Codigo: 2
+Palestrante: Victor Hugo
+Palestra: IA e sua Revolucao Tecnologica
+Local: UNOESTE
+Data: 10/11/2023
+Nome: Victor Hugo Vicente dos Santo
+Profissao: s
+Habilidades: effe
+Codigo: 5
+Palestrante: teste
+Palestra: teste
+Local: teste
+Data: 11/09/2000
+Nome: teste
+Profissao: teste
+Habilidades: teste
+Codigo: 10
+Palestrante: dez
+Palestra: dez vezes dez
+Local: dezmano
+Data: 10/10/1010
+Nome: dez do dez
+Profissao: dezbro
+Habilidades: deix
+

@@ -1,0 +1,30 @@
+Nome: victor
+Telefone: 123123
+Data de aniversario: 12/12/1212
+Email: grggrgr
+Tipo sanguineo: f
+
+Nome: effefe
+Telefone: 2143143234
+Data de aniversario: 10101010/12/1212
+Email: vvrggr
+Tipo sanguineo: f
+
+Nome: ewfwfewf
+Telefone: 1232141413
+Data de aniversario: 0/0/1212
+Email: effef
+Tipo sanguineo: f
+
+Nome: jfeiejif
+Telefone: 987654321
+Data de aniversario: 99/99/9999
+Email: ef
+Tipo sanguineo: e
+
+Nome: fefe
+Telefone: 34
+Data de aniversario: 33/43/9999
+Email: effe
+Tipo sanguineo: ef
+

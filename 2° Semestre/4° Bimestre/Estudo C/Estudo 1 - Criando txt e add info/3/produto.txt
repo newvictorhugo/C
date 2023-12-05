@@ -1,0 +1,10 @@
+Produtocarissimo
+105.99
+Pordutobaratissimo
+12.50
+sla
+10.00
+opa
+20.00
+produto.txt
+50.00
